@@ -1,4 +1,12 @@
-﻿parser grammar JasperParser;
+﻿// =============================================================================
+// ⚠ 本文件是 Jasper 语言的【权威语法】(canonical grammar)
+//   canonical home : https://github.com/jasper-language/jasper-grammar
+//   消费方式       : 各实现（Kotlin 编译器、未来的自举编译器）通过 git submodule
+//                    或构建期拉取引用本仓库；请勿在其他位置维护手工副本。
+//   修改流程       : 在 jasper-grammar 修改 → 推送 → 在实现仓库更新 submodule 指针。
+//   历史版本       : DarkMagier/jasper 中的 .g4 属第一版（Go）实现，已冻结，仅作参照。
+// =============================================================================
+parser grammar JasperParser;
 /*
 ======================================================================
 关于 // graph:: 注释（Graph Metadata Comment）的约定与用法
