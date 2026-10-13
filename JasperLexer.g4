@@ -14,10 +14,12 @@
 //   不包含 parser 规则，不包含语义逻辑。
 //
 // 设计原则：
-//   1) 真软关键字只有 get / set：lexer **不**为它们定义 token，
-//      由 parser 的 softGet / softSet 用谓词匹配 Identifier 的文本，
-//      因此它们在属性体之外可作普通标识符（例如 function get()）。
-//      其余（from / as / then / cast / label / is / and / or / not）是硬保留字。
+//   1) 真软关键字：get / set / from / then —— lexer **不**为它们定义 token，
+//      由 parser 的 softGet / softSet / softFrom / softThen 用谓词匹配
+//      Identifier 的文本，因此在关键字位置之外可作普通标识符
+//      （例如 function get()、p.then(cb)、range.from）。
+//      保持硬保留的是 as / cast / label / is / and / or / not：
+//      as 出现在表达式中间（cast x as T），此处加谓词会引入预测不确定性。
 //   2) 运算符/分隔符按"长规则优先"排列，避免 >> 被拆成 > >
 //      （详见 Operators & Punctuators 章节说明）。
 //   3) dict 字面量 Token 必须出现在 Identifier 之前，
@@ -127,7 +129,6 @@ Default      : 'default';
 Continue     : 'continue';
 Break        : 'break';
 Return       : 'return';
-Then         : 'then';       // 软关键字：循环 then/else（正常结束/被中断）
 Label        : 'label';      // 配合 continue label / break label
 
 // ---------- 异常处理 ----------
@@ -155,8 +156,8 @@ Is           : 'is';
 // ---------- 模块系统 ----------
 Package      : 'package';
 Import       : 'import';
-From         : 'from';      // 硬保留字：from x import y
-As           : 'as';        // 硬保留字：import alias / cast
+As           : 'as';        // 硬保留字（有意）：import alias / cast 转换；
+                             // 位于表达式中间，加谓词会引入预测不确定性
 
 // ---------- 集合字面量 ----------
 // 注意：必须出现在 Identifier 之前，避免被 tokenize 为普通标识符

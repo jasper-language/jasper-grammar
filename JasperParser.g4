@@ -258,7 +258,7 @@ importItem
  *   // softThen 的一种典型写法（见该规则 RHS）
  */
 //graph::softThen #@rule 说明：软关键字：softThen，通过 Identifier+谓词匹配固定文本。
-softThen     : Then ;
+softThen     : { _input.LT(1).getText().equals("then") }? Identifier ;
 
 //graph::softWhere #@rule 说明：软关键字：softWhere，用于泛型 where 子句。
 softWhere    : { _input.LT(1).getText().equals("where") }? Identifier ;
@@ -301,7 +301,7 @@ softLabel     : Label ;
  *   // softFrom 的一种典型写法（见该规则 RHS）
  */
 //graph::softFrom #@rule 说明：软关键字：softFrom，通过 Identifier+谓词匹配固定文本。
-softFrom     : From ;
+softFrom     : { _input.LT(1).getText().equals("from") }? Identifier ;
 
 /*
  * 规则：softAs
