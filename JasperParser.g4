@@ -1648,7 +1648,8 @@ localVariableDeclarationStatement
  */
 //graph::variableDeclarationTail #@keep #@rule 说明：统一变量声明尾部：变量绑定列表 + 分号。
 variableDeclarationTail
-    : decls+=variableBinding (',' decls+=variableBinding)* ','? ';'
+    : decl=variableBindingIncrement ';'
+    | decls+=variableBinding (',' decls+=variableBinding)* ','? ';'
     ;
 
 /*
@@ -1663,6 +1664,23 @@ variableDeclarationTail
  *   x: int = 1
  */
 //graph::variableBinding #@rule 说明：变量声明专用绑定：binding + 可选初始化表达式。
+/*
+ * 规则：variableBindingIncrement
+ * 所属分块：09 参数、变量与绑定
+ * 用途：初始化器为后缀自增 / 自减的**单个**绑定（`var y: int32 = x++;`）。
+ * 说明：
+ *   - 语义与 `y = x++;` 一致：取旧值存入新绑定，同时把源变量加一。
+ *   - 之所以单独成规则、而不把 postfixIncrement 直接加进 variableBinding 的初始化器：
+ *     一条声明语句可以有多个绑定（`var a = …, b = …`），那样
+ *     `var a = x++, b = y++;` 会通过，破坏「一条语句最多一次自增」的硬约束。
+ *     本规则要求自增初始化器**恰好出现在单个绑定**上，约束由规则形态保证而非计数。
+ *   - 因此 `var a = 1, b = y++;` 这类混合形态也被拒绝：请拆成两条声明语句。
+ */
+//graph::variableBindingIncrement #@keep #@rule 说明：单绑定的自增/自减初始化器。
+variableBindingIncrement
+    : core=binding assign='=' init=postfixIncrement                    #VariableBindingIncDec
+    ;
+
 variableBinding
     : core=binding (assign='=' init=expression)?
     ;
