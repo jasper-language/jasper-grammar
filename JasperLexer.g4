@@ -143,7 +143,6 @@ Defer        : 'defer';
 Lock         : 'lock';
 Locked       : 'locked';
 Atomic       : 'atomic';
-Go           : 'go';
 Yield        : 'yield';
 Await        : 'await';
 

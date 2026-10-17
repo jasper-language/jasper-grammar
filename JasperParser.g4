@@ -2195,7 +2195,6 @@ unaryExpression
     | '~' unaryExpression                               #UnaryBitNot
     | (Not | '!') unaryExpression                       #UnaryLogicalNot
     | awaitExpression                                   #UnaryAwait
-    | goExpression                                      #UnaryGo
     | castExpression                                    #UnaryCast
     | primary                                           #UnaryPrimary
     ;
@@ -2214,22 +2213,6 @@ unaryExpression
 //graph::awaitExpression #@rule 说明：表达式节点：awaitExpression。
 awaitExpression
     : Await unaryExpression
-    ;
-
-/*
- * 规则：goExpression
- * 所属分块：11 表达式
- * 用途：表达式节点：goExpression。
- * 说明：
- *   - 该规则只描述“可解析的语法形态”；名称解析/类型推断/语义收敛等由 AST Checker 处理。
- *   - 若本规则包含多个分支，建议在 AST 层以 alt label（#...）作为具体节点类型划分依据。
- *
- * 典型写法：
- *   go foo();
- */
-//graph::goExpression #@rule 说明：表达式节点：goExpression。
-goExpression
-    : Go goTarget
     ;
 
 /*
@@ -2808,25 +2791,6 @@ resource
     : mods=modifier* kind=(Var | Const)? bind=binding '=' init=expression #ResourceDecl
     ;
 
-
-/*
- * 规则：goTarget
- * 所属分块：12 语句与控制流
- * 用途：语法节点：goTarget。
- * 说明：
- *   - 该规则只描述“可解析的语法形态”；名称解析/类型推断/语义收敛等由 AST Checker 处理。
- *   - 若本规则包含多个分支，建议在 AST 层以 alt label（#...）作为具体节点类型划分依据。
- *
- * 典型写法：
- *   go foo();
- */
-//graph::goTarget #@rule 说明：语法节点：goTarget。
-goTarget
-    : primary                                        #GoTargetPrimary
-    | lambdaExpression                               #GoTargetLambda
-    | block                                          #GoTargetBlock
-    | '(' expression ')'                             #GoTargetParen
-    ;
 
 /*
  * 规则：forControl
