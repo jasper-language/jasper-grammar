@@ -2169,16 +2169,16 @@ nullCoalesceExpression
 //graph::binaryExpression #@keep #@core 说明：二元表达式：用直接左递归实现优先级链，并保留可扩展插入点。
 binaryExpression
     : unaryExpression                                                  #BinaryUnary
-    | binaryExpression op=(STAR | SLASH | PERCENT) unaryExpression      #BinaryMultiplication
-    | binaryExpression op=(PLUS | MINUS) unaryExpression                #BinaryAddition
-    | binaryExpression op=(LSHIFT | RSHIFT | URSHIFT) unaryExpression   #BinaryShift
-    | binaryExpression op=(LT | GT | LE | GE) unaryExpression           #BinaryRelational
-    | binaryExpression op=(EQUAL_EQUAL | NOT_EQUAL) unaryExpression     #BinaryEquality
-    | binaryExpression op=AMP unaryExpression                           #BinaryBitAnd
-    | binaryExpression op=CARET unaryExpression                         #BinaryBitExclusiveOr
-    | binaryExpression op=(PIPE | FULLWIDTH_PIPE) unaryExpression       #BinaryBitOr
-    | binaryExpression op=(And | AND_AND) unaryExpression               #BinaryAnd
-    | binaryExpression op=(Or | OR_OR) unaryExpression                  #BinaryOr
+    | binaryExpression op=(STAR | SLASH | PERCENT) binaryExpression      #BinaryMultiplication
+    | binaryExpression op=(PLUS | MINUS) binaryExpression                #BinaryAddition
+    | binaryExpression op=(LSHIFT | RSHIFT | URSHIFT) binaryExpression   #BinaryShift
+    | binaryExpression op=(LT | GT | LE | GE) binaryExpression           #BinaryRelational
+    | binaryExpression op=(EQUAL_EQUAL | NOT_EQUAL) binaryExpression     #BinaryEquality
+    | binaryExpression op=AMP binaryExpression                           #BinaryBitAnd
+    | binaryExpression op=CARET binaryExpression                         #BinaryBitExclusiveOr
+    | binaryExpression op=(PIPE | FULLWIDTH_PIPE) binaryExpression       #BinaryBitOr
+    | binaryExpression op=(And | AND_AND) binaryExpression               #BinaryAnd
+    | binaryExpression op=(Or | OR_OR) binaryExpression                  #BinaryOr
     ;
 
 /*
