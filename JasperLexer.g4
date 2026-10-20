@@ -15,7 +15,7 @@
 //
 // 设计原则：
 //   1) 真软关键字：get / set / from / then —— lexer **不**为它们定义 token，
-//      由 parser 的 softGet / softSet / softFrom / softThen 用谓词匹配
+//      由 parser 的 softGet / softSet / softFrom / softOnComplete 等用谓词匹配
 //      Identifier 的文本，因此在关键字位置之外可作普通标识符
 //      （例如 function get()、p.then(cb)、range.from）。
 //      保持硬保留的是 as / cast / label / is / and / or / not：

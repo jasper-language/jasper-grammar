@@ -244,9 +244,9 @@ importItem
 */
 
 /*
- * 规则：softThen
+ * 规则：softOnComplete / softOnBreak / softOnZeroRuns
  * 所属分块：03 软关键字
- * 用途：软关键字：softThen，通过 Identifier+谓词匹配固定文本。
+ * 用途：循环后置块的上下文软关键字；只在循环尾部位置识别，其他位置仍是普通标识符。
  * 说明：
  *   - 该规则只描述“可解析的语法形态”；名称解析/类型推断/语义收敛等由 AST Checker 处理。
  *   - 若本规则包含多个分支，建议在 AST 层以 alt label（#...）作为具体节点类型划分依据。
@@ -255,10 +255,15 @@ importItem
  *   - 该软关键字通过 specific softXxx rule 进行匹配，仅在被引用的位置生效。
  *
  * 典型写法：
- *   // softThen 的一种典型写法（见该规则 RHS）
+ *   for (x in xs) { ... }
+ *   onComplete { ... }
  */
-//graph::softThen #@rule 说明：软关键字：softThen，通过 Identifier+谓词匹配固定文本。
-softThen     : { _input.LT(1).getText().equals("then") }? Identifier ;
+//graph::softOnComplete #@rule 说明：循环正常完成子句的上下文软关键字。
+softOnComplete : { _input.LT(1).getText().equals("onComplete") }? Identifier ;
+//graph::softOnBreak #@rule 说明：循环被 break 打断子句的上下文软关键字。
+softOnBreak    : { _input.LT(1).getText().equals("onBreak") }? Identifier ;
+//graph::softOnZeroRuns #@rule 说明：循环零次执行子句的上下文软关键字。
+softOnZeroRuns : { _input.LT(1).getText().equals("onZeroRuns") }? Identifier ;
 
 //graph::softWhere #@rule 说明：软关键字：softWhere，用于泛型 where 子句。
 softWhere    : { _input.LT(1).getText().equals("where") }? Identifier ;
@@ -2398,19 +2403,28 @@ deferStatement
     ;
 
 /*
- * 规则：loopThenElse
+ * 规则：loopClause / loopSuffix
  * 所属分块：12 语句与控制流
- * 用途：语法节点：loopThenElse。
+ * 用途：循环后置块。任选子集；AST/翻译层负责互斥语义。
  * 说明：
  *   - 该规则只描述“可解析的语法形态”；名称解析/类型推断/语义收敛等由 AST Checker 处理。
  *   - 若本规则包含多个分支，建议在 AST 层以 alt label（#...）作为具体节点类型划分依据。
  *
  * 典型写法：
- *   // loopThenElse 的一种典型写法（见该规则 RHS）
+ *   onComplete { ... }
+ *   onBreak { ... }
+ *   onZeroRuns { ... }
  */
-//graph::loopThenElse #@rule 说明：语法节点：loopThenElse。
-loopThenElse
-    : softThen block (Else block)?
+//graph::loopClause #@rule 说明：循环后置块的单个子句。
+loopClause
+    : softOnComplete block
+    | softOnBreak block
+    | softOnZeroRuns block
+    ;
+
+//graph::loopSuffix #@rule 说明：循环后置块子句集合（任选子集）。
+loopSuffix
+    : loopClause+
     ;
 
 /*
@@ -2552,7 +2566,7 @@ defaultClause
  */
 //graph::whileStatement #@rule 说明：语句节点：whileStatement。
 whileStatement
-    : While '(' expression ')' block loopThenElse?
+    : While '(' expression ')' block loopSuffix?
     ;
 
 /*
@@ -2568,7 +2582,7 @@ whileStatement
  */
 //graph::doStatement #@rule 说明：语句节点：doStatement。
 doStatement
-    : Do block While '(' expression ')' ';' loopThenElse?
+    : Do block While '(' expression ')' ';'
     ;
 
 /*
@@ -2584,7 +2598,7 @@ doStatement
  */
 //graph::forStatement #@rule 说明：语句节点：forStatement。
 forStatement
-    : For '(' forControl ')' block loopThenElse?
+    : For '(' forControl ')' block loopSuffix?
     ;
 
 /*
